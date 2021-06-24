@@ -79,7 +79,15 @@ class ContainerView: RCTView {
 
     @objc func setColorFilters(_ newColorFilters: [NSDictionary]) {
         colorFilters = newColorFilters
-        applyProperties()
+
+        if (colorFilters.count > 0) {
+            for filter in colorFilters {
+                let keypath: String = "\(filter.value(forKey: "keypath") as! String).**.Color"
+                let fillKeypath = AnimationKeypath(keypath: keypath)
+                let colorFilterValueProvider = ColorValueProvider(hexStringToColor(hex: filter.value(forKey: "color") as! String))
+                animationView?.setValueProvider(colorFilterValueProvider, keypath: fillKeypath)
+            }
+        }
     }
 
     func play(fromFrame: AnimationFrameTime? = nil, toFrame: AnimationFrameTime, completion: LottieCompletionBlock? = nil) {
@@ -122,13 +130,5 @@ class ContainerView: RCTView {
         animationView?.currentProgress = progress
         animationView?.animationSpeed = speed
         animationView?.loopMode = loop
-        if (colorFilters.count > 0) {
-            for filter in colorFilters {
-                let keypath: String = "\(filter.value(forKey: "keypath") as! String).**.Color"
-                let fillKeypath = AnimationKeypath(keypath: keypath)
-                let colorFilterValueProvider = ColorValueProvider(hexStringToColor(hex: filter.value(forKey: "color") as! String))
-                animationView?.setValueProvider(colorFilterValueProvider, keypath: fillKeypath)
-            }
-        }
     }
 }
