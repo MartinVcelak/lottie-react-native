@@ -138,6 +138,11 @@ declare module "lottie-react-native" {
      onAnimationStart ?: () => void;
 
     /**
+     * A callback function for animation progress.
+     */
+     onAnimationProgress ?: (progress: number) => void;
+
+    /**
      * A callback function which will be called when the view has been laid out.
      */
     onLayout?: (event: LayoutChangeEvent) => void;

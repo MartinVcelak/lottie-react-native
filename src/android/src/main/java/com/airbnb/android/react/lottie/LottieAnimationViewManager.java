@@ -23,6 +23,8 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.WeakHashMap;
 
 class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> {
@@ -34,6 +36,7 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
   private static final int COMMAND_RESET = 2;
   private static final int COMMAND_PAUSE = 3;
   private static final int COMMAND_RESUME = 4;
+  private Timer progressTimer = null;
 
   private Map<LottieAnimationView, LottieAnimationViewPropertyManager> propManagersMap = new WeakHashMap<>();
 
@@ -53,16 +56,19 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
     view.addAnimatorListener(new Animator.AnimatorListener() {
       @Override
       public void onAnimationStart(Animator animation) {
+        startProgressTimer(view);
         sendOnAnimationStartEvent(view);
       }
 
       @Override
       public void onAnimationEnd(Animator animation) {
+        cancelProgressTimer();
         sendOnAnimationFinishEvent(view, false);
       }
 
       @Override
       public void onAnimationCancel(Animator animation) {
+        cancelProgressTimer();
         sendOnAnimationFinishEvent(view, true);
       }
 
@@ -70,6 +76,50 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
       public void onAnimationRepeat(Animator animation) {}
     });
     return view;
+  }
+
+  private void startProgressTimer(LottieAnimationView view) {
+    cancelProgressTimer();
+
+    progressTimer = new Timer();
+    // Set the schedule function
+    progressTimer.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        if(view.isAnimating()) {
+          sendOnAnimationProgressEvent(view);
+        }
+      }
+    },
+    0, 50);
+  }
+
+  private void cancelProgressTimer() {
+    if(progressTimer != null) {
+      progressTimer.cancel();
+    }
+
+    progressTimer = null;
+  }
+
+  private void sendOnAnimationProgressEvent(final LottieAnimationView view) {
+    WritableMap event = Arguments.createMap();
+    event.putDouble("progress", view.getProgress());
+    Context ctx = view.getContext();
+    ReactContext reactContext = null;
+    while (ctx instanceof ContextWrapper) {
+      if (ctx instanceof ReactContext) {
+        reactContext = (ReactContext)ctx;
+        break;
+      }
+      ctx = ((ContextWrapper)ctx).getBaseContext();
+    }
+    if (reactContext != null) {
+      reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+          view.getId(),
+          "animationProgress",
+          event);
+    }
   }
 
   private void sendOnAnimationFinishEvent(final LottieAnimationView view, boolean isCancelled) {
@@ -123,7 +173,11 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
             MapBuilder.of(
                 "phasedRegistrationNames",
                 MapBuilder.of("bubbled", "onAnimationStart")))
-        .build();
+        .put(
+            "animationProgress",
+            MapBuilder.of(
+                "phasedRegistrationNames",
+                MapBuilder.of("bubbled", "onAnimationProgress")))        .build();
   }
 
   @Override public Map<String, Integer> getCommandsMap() {

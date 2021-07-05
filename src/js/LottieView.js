@@ -77,6 +77,7 @@ const propTypes = {
   source: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   onAnimationFinish: PropTypes.func,
   onAnimationStart: PropTypes.func,
+  onAnimationProgress: PropTypes.func,
   onLayout: PropTypes.func,
   cacheComposition: PropTypes.bool,
 };
@@ -115,6 +116,7 @@ class LottieView extends React.PureComponent {
     this.refRoot = this.refRoot.bind(this);
     this.onAnimationFinish = this.onAnimationFinish.bind(this);
     this.onAnimationStart = this.onAnimationStart.bind(this);
+    this.onAnimationProgress = this.onAnimationProgress.bind(this);
     this.onLayout = this.onLayout.bind(this);
   }
 
@@ -193,6 +195,12 @@ class LottieView extends React.PureComponent {
     }
   }
 
+  onAnimationProgress(evt) {
+    if (this.props.onAnimationProgress) {
+      this.props.onAnimationProgress(evt.nativeEvent.progress)
+    }
+  }
+
   onLayout(evt) {
     if (this.props.onLayout) {
       this.props.onLayout(evt);
@@ -229,6 +237,7 @@ class LottieView extends React.PureComponent {
           sourceJson={sourceJson}
           onAnimationFinish={this.onAnimationFinish}
           onAnimationStart={this.onAnimationStart}
+          onAnimationProgress={this.onAnimationProgress}
           onLayout={this.onLayout}
         />
       </View>
