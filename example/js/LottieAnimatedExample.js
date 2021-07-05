@@ -100,6 +100,7 @@ export default class LottieAnimatedExample extends React.Component {
             source={example.getJson()}
             progress={progress}
             loop={loop}
+            onAnimationStart={() => console.log("Animation started")}
             enableMergePathsAndroidForKitKatAndAbove
           />
         </View>

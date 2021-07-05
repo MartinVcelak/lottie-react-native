@@ -52,7 +52,9 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
     view.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
     view.addAnimatorListener(new Animator.AnimatorListener() {
       @Override
-      public void onAnimationStart(Animator animation) {}
+      public void onAnimationStart(Animator animation) {
+        sendOnAnimationStartEvent(view);
+      }
 
       @Override
       public void onAnimationEnd(Animator animation) {
@@ -90,6 +92,25 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
     }
   }
 
+  private void sendOnAnimationStartEvent(final LottieAnimationView view) {
+    WritableMap event = Arguments.createMap();
+    Context ctx = view.getContext();
+    ReactContext reactContext = null;
+    while (ctx instanceof ContextWrapper) {
+      if (ctx instanceof ReactContext) {
+        reactContext = (ReactContext)ctx;
+        break;
+      }
+      ctx = ((ContextWrapper)ctx).getBaseContext();
+    }
+    if (reactContext != null) {
+      reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+          view.getId(),
+          "animationStart",
+          event);
+    }
+  }
+
   @Override public Map getExportedCustomBubblingEventTypeConstants() {
     return MapBuilder.builder()
         .put(
@@ -97,6 +118,11 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
             MapBuilder.of(
                 "phasedRegistrationNames",
                 MapBuilder.of("bubbled", "onAnimationFinish")))
+        .put(
+            "animationStart",
+            MapBuilder.of(
+                "phasedRegistrationNames",
+                MapBuilder.of("bubbled", "onAnimationStart")))
         .build();
   }
 

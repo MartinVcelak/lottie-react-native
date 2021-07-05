@@ -156,3 +156,7 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+task wrapper(type: Wrapper){
+   gradleVersion = '2.14.1'
+}

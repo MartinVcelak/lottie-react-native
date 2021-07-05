@@ -133,6 +133,11 @@ declare module "lottie-react-native" {
     onAnimationFinish ?: (isCancelled: boolean) => void;
 
     /**
+     * A callback function which will be called when animation is started
+     */
+     onAnimationStart ?: () => void;
+
+    /**
      * A callback function which will be called when the view has been laid out.
      */
     onLayout?: (event: LayoutChangeEvent) => void;

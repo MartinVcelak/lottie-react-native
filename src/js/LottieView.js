@@ -76,6 +76,7 @@ const propTypes = {
   enableMergePathsAndroidForKitKatAndAbove: PropTypes.bool,
   source: PropTypes.oneOfType([PropTypes.object, PropTypes.string]).isRequired,
   onAnimationFinish: PropTypes.func,
+  onAnimationStart: PropTypes.func,
   onLayout: PropTypes.func,
   cacheComposition: PropTypes.bool,
 };
@@ -113,6 +114,7 @@ class LottieView extends React.PureComponent {
     this.viewConfig = viewConfig;
     this.refRoot = this.refRoot.bind(this);
     this.onAnimationFinish = this.onAnimationFinish.bind(this);
+    this.onAnimationStart = this.onAnimationStart.bind(this);
     this.onLayout = this.onLayout.bind(this);
   }
 
@@ -185,6 +187,12 @@ class LottieView extends React.PureComponent {
     }
   }
 
+  onAnimationStart(evt) {
+    if (this.props.onAnimationStart) {
+      this.props.onAnimationStart()
+    }
+  }
+
   onLayout(evt) {
     if (this.props.onLayout) {
       this.props.onLayout(evt);
@@ -220,6 +228,7 @@ class LottieView extends React.PureComponent {
           sourceName={sourceName}
           sourceJson={sourceJson}
           onAnimationFinish={this.onAnimationFinish}
+          onAnimationStart={this.onAnimationStart}
           onLayout={this.onLayout}
         />
       </View>
