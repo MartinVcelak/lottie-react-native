@@ -168,6 +168,7 @@ declare module "lottie-react-native" {
    */
   class AnimatedLottieView extends React.Component<AnimatedLottieViewProps, {}> {
     play(startFrame?: number, endFrame?: number): void;
+    playProgress(progress: number): void;
     reset(): void;
     pause(): void;
     resume(): void;

@@ -47,7 +47,7 @@ export default class LottieAnimatedExample extends React.Component {
   manageAnimation = shouldPlay => {
     if (!this.state.progress) {
       if (shouldPlay) {
-        this.anim.play();
+        this.anim.playProgress(0.5)
       } else {
         this.anim.reset();
       }

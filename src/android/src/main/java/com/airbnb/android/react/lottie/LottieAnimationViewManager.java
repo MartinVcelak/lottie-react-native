@@ -36,6 +36,8 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
   private static final int COMMAND_RESET = 2;
   private static final int COMMAND_PAUSE = 3;
   private static final int COMMAND_RESUME = 4;
+  private static final int COMMAND_PLAY_PROGRESS = 5;
+
   private Timer progressTimer = null;
 
   private Map<LottieAnimationView, LottieAnimationViewPropertyManager> propManagersMap = new WeakHashMap<>();
@@ -183,6 +185,7 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
   @Override public Map<String, Integer> getCommandsMap() {
     return MapBuilder.of(
         "play", COMMAND_PLAY,
+        "playProgress", COMMAND_PLAY_PROGRESS,
         "reset", COMMAND_RESET,
         "pause", COMMAND_PAUSE,
         "resume", COMMAND_RESUME
@@ -210,25 +213,16 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
                 }
               }
             }
-            if (ViewCompat.isAttachedToWindow(view)) {
-              view.setProgress(0f);
-              view.playAnimation();
-            } else {
-              view.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
-                   @Override
-                   public void onViewAttachedToWindow(View v) {
-                      LottieAnimationView view = (LottieAnimationView)v;
-                      view.setProgress(0f);
-                      view.playAnimation();
-                      view.removeOnAttachStateChangeListener(this);
-                   }
-
-                   @Override
-                   public void onViewDetachedFromWindow(View v) {
-                      view.removeOnAttachStateChangeListener(this);
-                   }
-               });
-            }
+            play(view, 0.0f);
+          }
+        });
+      }
+      break;
+      case COMMAND_PLAY_PROGRESS: {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+          @Override public void run() {
+            float progress = (float) args.getDouble(0);
+            play(view, progress);
           }
         });
       }
@@ -352,6 +346,28 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
   protected void onAfterUpdateTransaction(LottieAnimationView view) {
     super.onAfterUpdateTransaction(view);
     getOrCreatePropertyManager(view).commitChanges();
+  }
+
+  private void play(LottieAnimationView view, float progress) {
+    if (ViewCompat.isAttachedToWindow(view)) {
+      view.playAnimation();
+      view.setProgress(progress);
+    } else {
+      view.addOnAttachStateChangeListener(new OnAttachStateChangeListener() {
+        @Override
+        public void onViewAttachedToWindow(View v) {
+          LottieAnimationView view = (LottieAnimationView) v;
+          view.playAnimation();
+          view.setProgress(progress);
+          view.removeOnAttachStateChangeListener(this);
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(View v) {
+          view.removeOnAttachStateChangeListener(this);
+        }
+      });
+    }
   }
 
   private LottieAnimationViewPropertyManager getOrCreatePropertyManager(LottieAnimationView view) {

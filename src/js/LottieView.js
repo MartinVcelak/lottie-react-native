@@ -136,6 +136,10 @@ class LottieView extends React.PureComponent {
     this.runCommand('play', [startFrame, endFrame]);
   }
 
+  playProgress(progress) {
+    this.runCommand('playProgress', [progress])
+  }
+
   reset() {
     this.runCommand('reset');
   }
