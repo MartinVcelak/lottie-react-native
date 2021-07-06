@@ -241,7 +241,7 @@ class LottieView extends React.PureComponent {
           sourceJson={sourceJson}
           onAnimationFinish={this.onAnimationFinish}
           onAnimationStart={this.onAnimationStart}
-          onAnimationProgress={this.onAnimationProgress}
+          onAnimationProgressCallback={this.onAnimationProgress}
           onLayout={this.onLayout}
         />
       </View>

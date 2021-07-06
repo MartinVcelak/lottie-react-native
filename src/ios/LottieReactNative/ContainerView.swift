@@ -11,7 +11,7 @@ class ContainerView: RCTView {
     private var progressTimer: Timer?
     
     @objc var onAnimationFinish: RCTBubblingEventBlock?
-    @objc var onAnimationProgress: RCTBubblingEventBlock?
+    @objc var onAnimationProgressCallback: RCTBubblingEventBlock?
     
     var animationView: AnimationView?
     
@@ -148,7 +148,7 @@ class ContainerView: RCTView {
         
         progressTimer = Timer.scheduledTimer(withTimeInterval: 50, repeats: true) { [weak self] _ in
             if let view = self?.animationView, view.isAnimationPlaying {
-                self?.onAnimationProgress?(["progress": self?.animationView?.currentProgress])
+                self?.onAnimationProgressCallback?(["progress": (self?.animationView?.currentProgress) as Any])
             }
         }
     }

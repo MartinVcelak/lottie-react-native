@@ -179,7 +179,8 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
             "animationProgress",
             MapBuilder.of(
                 "phasedRegistrationNames",
-                MapBuilder.of("bubbled", "onAnimationProgress")))        .build();
+                MapBuilder.of("bubbled", "onAnimationProgressCallback")))
+        .build();
   }
 
   @Override public Map<String, Integer> getCommandsMap() {
