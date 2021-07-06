@@ -34,6 +34,7 @@ class AnimationViewManagerModule: RCTViewManager {
             }
 
             let callback: LottieCompletionBlock = { animationFinished in
+                view.stopProgressTimer()
                 if let onFinish = view.onAnimationFinish {
                     onFinish(["isCancelled": !animationFinished])
                 }
@@ -43,7 +44,31 @@ class AnimationViewManagerModule: RCTViewManager {
                 view.play(fromFrame: AnimationFrameTime(truncating: startFrame), toFrame: AnimationFrameTime(truncating: endFrame), completion: callback)
             } else {
                 view.play(completion: callback)
+                view.startProgressTimer()
             }
+        }
+    }
+    
+    @objc(playProgress:progress:)
+    public func playProgress(_ reactTag: NSNumber, progress: NSNumber) {
+        self.bridge.uiManager.addUIBlock { (uiManager, viewRegistry) in
+            guard let view = viewRegistry?[reactTag] as? ContainerView else {
+                if (RCT_DEBUG == 1) {
+                    print("Invalid view returned from registry, expecting ContainerView")
+                }
+                return
+            }
+            
+            let callback: LottieCompletionBlock = { animationFinished in
+                view.stopProgressTimer()
+                
+                if let onFinish = view.onAnimationFinish {
+                    onFinish(["isCancelled": !animationFinished])
+                }
+            }
+            
+            view.playProgress(progress: progress.floatValue)
+            view.startProgressTimer()
         }
     }
 

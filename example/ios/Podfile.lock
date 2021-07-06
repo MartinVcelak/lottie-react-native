@@ -20,9 +20,9 @@ PODS:
     - glog
   - glog (0.3.5)
   - lottie-ios (3.1.8)
-  - lottie-react-native (3.4.0):
+  - lottie-react-native (4.0.2):
     - lottie-ios (~> 3.1.8)
-    - React
+    - React-Core
   - RCTRequired (0.62.2)
   - RCTTypeSafety (0.62.2):
     - FBLazyVector (= 0.62.2)
@@ -346,7 +346,7 @@ SPEC CHECKSUMS:
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
-  lottie-react-native: 98dbce46eb4e71d5ac52ac44614c11918a64dacc
+  lottie-react-native: 465bea912988a8d260901fd627e2bc3773b300bb
   RCTRequired: cec6a34b3ac8a9915c37e7e4ad3aa74726ce4035
   RCTTypeSafety: 93006131180074cffa227a1075802c89a49dd4ce
   React: 29a8b1a02bd764fb7644ef04019270849b9a7ac3
@@ -368,6 +368,6 @@ SPEC CHECKSUMS:
   ReactCommon: ed4e11d27609d571e7eee8b65548efc191116eb3
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
 
-PODFILE CHECKSUM: 55cad7067945d2f8536c90590b7800ab6fa7eea9
+PODFILE CHECKSUM: 25a44be253f8c70e727c5906c649adabaef819b3
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.10.1

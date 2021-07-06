@@ -8,8 +8,13 @@ class ContainerView: RCTView {
     private var resizeMode: String = ""
     private var sourceName: String = ""
     private var colorFilters: [NSDictionary] = []
+    private var progressTimer: Timer?
+    
     @objc var onAnimationFinish: RCTBubblingEventBlock?
+    @objc var onAnimationProgress: RCTBubblingEventBlock?
+    
     var animationView: AnimationView?
+    
 
     @objc func setSpeed(_ newSpeed: CGFloat) {
         speed = newSpeed
@@ -94,6 +99,11 @@ class ContainerView: RCTView {
         animationView?.backgroundBehavior = .pauseAndRestore
         animationView?.play(fromFrame: fromFrame, toFrame: toFrame, loopMode: self.loop, completion: completion);
     }
+    
+    func playProgress(progress: Float, completion: LottieCompletionBlock? = nil) {
+        animationView?.play(completion: completion)
+        animationView?.currentProgress = AnimationProgressTime(progress)
+    }
 
     func play(completion: LottieCompletionBlock? = nil) {
         animationView?.backgroundBehavior = .pauseAndRestore
@@ -130,5 +140,23 @@ class ContainerView: RCTView {
         animationView?.currentProgress = progress
         animationView?.animationSpeed = speed
         animationView?.loopMode = loop
+    }
+    
+    
+    func startProgressTimer() {
+        stopProgressTimer()
+        
+        progressTimer = Timer.scheduledTimer(withTimeInterval: 50, repeats: true) { [weak self] _ in
+            if let view = self?.animationView, view.isAnimationPlaying {
+                self?.onAnimationProgress?(["progress": self?.animationView?.currentProgress])
+            }
+        }
+    }
+    
+    func stopProgressTimer() {
+        if let timer = progressTimer {
+            timer.invalidate()
+            progressTimer = nil
+        }
     }
 }
