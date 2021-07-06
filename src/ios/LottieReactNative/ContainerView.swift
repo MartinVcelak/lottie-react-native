@@ -101,8 +101,8 @@ class ContainerView: RCTView {
     }
     
     func playProgress(progress: Float, completion: LottieCompletionBlock? = nil) {
-        animationView?.play(completion: completion)
         animationView?.currentProgress = AnimationProgressTime(progress)
+        animationView?.play(completion: completion)
     }
 
     func play(completion: LottieCompletionBlock? = nil) {
@@ -146,9 +146,9 @@ class ContainerView: RCTView {
     func startProgressTimer() {
         stopProgressTimer()
         
-        progressTimer = Timer.scheduledTimer(withTimeInterval: 50, repeats: true) { [weak self] _ in
+        progressTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { [weak self] _ in
             if let view = self?.animationView, view.isAnimationPlaying {
-                self?.onAnimationProgressCallback?(["progress": (self?.animationView?.currentProgress) as Any])
+                self?.onAnimationProgressCallback?(["progress": (self?.animationView?.realtimeAnimationProgress) as Any])
             }
         }
     }

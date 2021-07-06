@@ -67,7 +67,7 @@ class AnimationViewManagerModule: RCTViewManager {
                 }
             }
             
-            view.playProgress(progress: progress.floatValue)
+            view.playProgress(progress: progress.floatValue, completion: callback)
             view.startProgressTimer()
         }
     }
