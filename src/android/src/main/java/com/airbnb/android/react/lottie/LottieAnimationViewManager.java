@@ -5,7 +5,11 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Handler;
 import android.os.Looper;
+
+import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
+
+import android.util.Log;
 import android.widget.ImageView;
 import android.view.View.OnAttachStateChangeListener;
 import android.view.View;
@@ -22,6 +26,8 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,7 +44,7 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
   private static final int COMMAND_RESUME = 4;
   private static final int COMMAND_PLAY_PROGRESS = 5;
 
-  private Timer progressTimer = null;
+  private Map<Integer, Timer> progressTimerMap = new HashMap<Integer, Timer>() ;
 
   private Map<LottieAnimationView, LottieAnimationViewPropertyManager> propManagersMap = new WeakHashMap<>();
 
@@ -64,13 +70,13 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
 
       @Override
       public void onAnimationEnd(Animator animation) {
-        cancelProgressTimer();
+        cancelProgressTimer(view);
         sendOnAnimationFinishEvent(view, false);
       }
 
       @Override
       public void onAnimationCancel(Animator animation) {
-        cancelProgressTimer();
+        cancelProgressTimer(view);
         sendOnAnimationFinishEvent(view, true);
       }
 
@@ -80,10 +86,19 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
     return view;
   }
 
-  private void startProgressTimer(LottieAnimationView view) {
-    cancelProgressTimer();
+  @Override
+  public void onDropViewInstance(@NonNull LottieAnimationView view) {
+    super.onDropViewInstance(view);
 
-    progressTimer = new Timer();
+    cancelProgressTimer(view);
+  }
+
+
+  private void startProgressTimer(LottieAnimationView view) {
+    cancelProgressTimer(view);
+
+    Timer progressTimer = new Timer();
+
     // Set the schedule function
     progressTimer.scheduleAtFixedRate(new TimerTask() {
       @Override
@@ -94,14 +109,17 @@ class LottieAnimationViewManager extends SimpleViewManager<LottieAnimationView> 
       }
     },
     0, 50);
+
+    progressTimerMap.put(view.getId(), progressTimer);
   }
 
-  private void cancelProgressTimer() {
-    if(progressTimer != null) {
-      progressTimer.cancel();
-    }
+  private void cancelProgressTimer(LottieAnimationView view) {
+    Timer timer = progressTimerMap.get(view.getId());
 
-    progressTimer = null;
+    if(timer != null) {
+      timer.cancel();
+      progressTimerMap.remove(view.getId());
+    }
   }
 
   private void sendOnAnimationProgressEvent(final LottieAnimationView view) {
