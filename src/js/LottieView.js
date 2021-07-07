@@ -33,6 +33,7 @@ const LottieViewManager = Platform.select({
     moduleName: 'LottieAnimationView',
     mock: {
       play: () => {},
+      playProgress: () => {},
       reset: () => {},
       pause: () => {},
       resume: () => {},
