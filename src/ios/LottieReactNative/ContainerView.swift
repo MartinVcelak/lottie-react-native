@@ -65,8 +65,15 @@ class ContainerView: RCTView {
           return
         }
         sourceName = newSourceName
+        let url = URL(fileURLWithPath: sourceName)
 
-        let starAnimationView = AnimationView(name: sourceName)
+        guard let data = try? Data(contentsOf: url),
+              let animation = try? JSONDecoder().decode(Animation.self, from: data) else {
+            return
+        }
+        
+        let starAnimationView = AnimationView()
+        starAnimationView.animation = animation
         replaceAnimationView(next: starAnimationView)
     }
 

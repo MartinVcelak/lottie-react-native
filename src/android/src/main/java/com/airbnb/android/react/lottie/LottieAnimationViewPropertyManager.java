@@ -13,6 +13,9 @@ import com.airbnb.lottie.model.KeyPath;
 import com.airbnb.lottie.value.LottieValueCallback;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.regex.Pattern;
 /**
@@ -111,7 +114,19 @@ public class LottieAnimationViewPropertyManager {
     }
 
     if (animationNameDirty) {
-      view.setAnimation(animationName);
+      InputStream input = null;
+      try {
+        input = view.getContext().getAssets().open(animationName);
+      } catch(Exception e) {  }
+
+      if(input == null) {
+        try {
+          input = new FileInputStream(animationName);
+        }
+        catch(Exception e) { return; }
+      }
+
+      view.setAnimation(input, animationName);
       animationNameDirty = false;
     }
 
