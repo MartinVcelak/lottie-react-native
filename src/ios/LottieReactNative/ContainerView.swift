@@ -147,6 +147,7 @@ class ContainerView: RCTView {
         animationView?.currentProgress = progress
         animationView?.animationSpeed = speed
         animationView?.loopMode = loop
+        setColorFilters(colorFilters)
     }
     
     
