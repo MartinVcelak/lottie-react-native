@@ -108,8 +108,7 @@ class ContainerView: RCTView {
     }
     
     func playProgress(progress: Float, completion: LottieCompletionBlock? = nil) {
-        animationView?.currentProgress = AnimationProgressTime(progress)
-        animationView?.play(completion: completion)
+        animationView?.play(fromProgress: AnimationProgressTime(progress), toProgress: 1.0, loopMode: animationView?.loopMode, completion: completion)
     }
 
     func play(completion: LottieCompletionBlock? = nil) {
