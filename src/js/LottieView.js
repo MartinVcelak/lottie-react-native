@@ -134,6 +134,7 @@ class LottieView extends React.PureComponent {
   }
 
   play(startFrame = -1, endFrame = -1) {
+    console.log("play(startFrame)")
     this.runCommand('play', [startFrame, endFrame]);
   }
 
@@ -182,6 +183,7 @@ class LottieView extends React.PureComponent {
   }
 
   refRoot(root) {
+    console.log("refRoot(root)")
     this.root = root;
     if (this.props.autoPlay) {
       this.play();
