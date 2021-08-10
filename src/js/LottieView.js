@@ -155,18 +155,24 @@ class LottieView extends React.PureComponent {
   }
 
   runCommand(name, args = []) {
+    console.log("runCommand: " + name)
+
     const handle = this.getHandle();
     if (!handle) {
+        console.log("No handle!")
       return null;
     }
 
     return Platform.select({
-      android: () =>
-        UIManager.dispatchViewManagerCommand(
+      android: () => {
+          console.log("Android UIManager.dispatch")
+
+      UIManager.dispatchViewManagerCommand(
           handle,
           safeGetViewManagerConfig('LottieAnimationView').Commands[name],
           args,
-        ),
+        )
+      },
       windows: () =>
         UIManager.dispatchViewManagerCommand(
           handle,
