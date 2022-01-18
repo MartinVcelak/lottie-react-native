@@ -21,6 +21,6 @@ Pod::Spec.new do |s|
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
 
   s.dependency 'React-Core'
-  s.dependency 'lottie-ios', '~> 3.1.8'
+  s.dependency 'lottie-ios', '3.1.8'
   s.swift_version = "4.1"
 end
